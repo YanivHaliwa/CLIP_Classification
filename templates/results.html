@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLIP Classification Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+        }
+        .back-link {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .classifications {
+            margin-top: 30px;
+        }
+        .classification-group {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .classification-group h3 {
+            margin-top: 0;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .image-card {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            overflow: hidden;
+            padding: 10px;
+        }
+        .image-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .confidence {
+            margin-top: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .details-section {
+            margin-top: 50px;
+        }
+        .image-details {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .detail-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .detail-header img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+        .classifications-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .classifications-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .highlight {
+            background-color: #ffffcc;
+        }
+        .alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Classification Results</h1>
+    
+    {% if using_default_labels %}
+    <div class="alert">
+        <strong>Note:</strong> Using our comprehensive set of {{ labels|length }} default labels generated from WordNet. For more specific results, you can go back and enter custom labels.
+    </div>
+    {% else %}
+    <div class="info">
+        <strong>Using {{ labels|length }} custom labels:</strong> {{ labels|join(', ') }}
+    </div>
+    {% endif %}
+    
+    <a href="{{ url_for('index') }}" class="back-link">Classify New Images</a>
+    
+    <div class="classifications">
+        <h2>Grouped by Classification</h2>
+        
+        {% for label, images in classifications.items() %}
+        <div class="classification-group">
+            <h3>{% if label %}{{ label }}{% else %}Unlabeled{% endif %} ({{ images|length }} {% if images|length == 1 %}image{% else %}images{% endif %})</h3>
+            <div class="image-grid">
+                {% for image in images %}
+                <div class="image-card">
+                    <img src="/{{ image.path }}" alt="{% if label %}{{ label }}{% else %}Unlabeled{% endif %}">
+                    <div class="confidence">{{ "%.2f"|format(image.confidence) }}%</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="details-section">
+        <h2>Detailed Results</h2>
+        
+        {% for image_path, classifications in results.items() %}
+        <div class="image-details">
+            <div class="detail-header">
+                <img src="/{{ image_path }}" alt="Classified Image">
+                <h3>Image Analysis</h3>
+            </div>
+            
+            <ul class="classifications-list">
+                {% for classification in classifications %}
+                <li class="{% if loop.first %}highlight{% endif %}">
+                    {% if classification.label %}{{ classification.label }}{% else %}Unlabeled{% endif %}: {{ "%.2f"|format(classification.confidence) }}%
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLIP Image Classifier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="file"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash-message {
+            padding: 10px;
+            background-color: #f44336;
+            color: white;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .instructions {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CLIP Image Classifier</h1>
+    
+    <div class="instructions">
+        <h3>Instructions:</h3>
+        <ol>
+            <li>Upload multiple images you want to classify</li>
+            <li>Enter labels (comma-separated) that you want to classify your images as</li>
+            <li>Click "Classify Images" to process your images</li>
+            <li>View results and see how your images are grouped by their classifications</li>
+        </ol>
+    </div>
+    
+    {% if get_flashed_messages() %}
+    <div class="flash-messages">
+        {% for message in get_flashed_messages() %}
+        <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <form action="{{ url_for('process') }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="files">Select Images:</label>
+            <input type="file" name="files[]" id="files" multiple accept=".png,.jpg,.jpeg,.gif" required>
+            <small>You can select multiple files</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="labels">Labels (comma-separated):</label>
+            <input type="text" name="labels" id="labels" placeholder="cat, dog, horse, person">
+            <small>Example: cat, dog, horse, person. Leave empty to use our AI-generated set of 1000 common object categories from NLTK WordNet.</small>
+        </div>
+        
+        <div class="form-group">
+            <input type="submit" value="Classify Images">
+        </div>
+    </form>
+</body>
+</html>
