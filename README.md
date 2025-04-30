@@ -4,6 +4,8 @@ A Flask web application for classifying images using OpenAI's CLIP (Contrastive 
 
 ![CLIP Model](https://github.com/openai/CLIP/raw/main/CLIP.png)
 
+> **Credit**: This project uses [OpenAI's CLIP model](https://github.com/openai/CLIP), which was created by OpenAI to connect text and images. All credit for the original CLIP model and research goes to OpenAI.
+
 ## Overview
 
 This application uses the CLIP model to classify images based on user-provided or default labels. It efficiently processes images in individual GPU batches, which allows it to handle a large number of classification labels while managing GPU memory effectively.
